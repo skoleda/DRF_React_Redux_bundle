@@ -1,0 +1,109 @@
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { getTodos } from '../../actions/todos';
+import todos from "../../reducers/todos";
+import PropTypes from 'prop-types'
+
+const styles = {
+     input: {//               <button id = 'rmbtn' className = 'rm' onClick = {() => removeTodo(todo.id)}>&times;</button>
+        marginRight: '1rem'
+    }
+};
+
+class TodoItem extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        this.props.getTodos();
+    }
+
+    render() {
+        return (
+            <li className='listyles'>
+
+
+
+                            <span>
+                                <input
+                                    todo={todo}
+                                    key={todo.id}
+                                    index={index}
+                                    type='checkbox'
+                                    checked={todo.status}
+                                    style={styles.input}
+                                    //onChange={()=>onChange(todos.id)} <strong>{++index}</strong>
+                                />
+                                <strong>{++index}</strong>
+                                &nbsp;
+                                {todo.text}
+                            </span>
+
+
+            </li>
+        )
+    }
+}
+
+const mapStateToProps = state => ({
+    index:PropTypes.number,
+    onChange:PropTypes.func.isRequired,
+});
+
+export default connect(
+    mapStateToProps,
+    {getTodos}
+)(TodoItem);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import axios from 'axios';
+import {GET_TODOS, ADD_TODO} from './types';
+
+// GET TODOS
+export const getTodos = () => async dispatch => {
+  let res = []
+  await axios
+  .get('/todos/todos/')
+  .then(response => res = response);
+
+  dispatch({
+    type: GET_TODOS,
+    payload: res.data
+  });
+};
+
+export const addTodo = async (data) => {
+  console.log(data,'data addTodo')
+  let newTask = {text: data, status: false}
+  async function a (nee) {
+      const res = await axios.post('/todos/todos/', newTask);
+      return res;
+    }
+    let c;
+    new Promise((resolve, reject) => {
+    let dispatch = () => {
+      c = a(newTask);
+        dispatch({
+          type: GET_TODOS,
+          payload: c
+        });
+    }
+      resolve()
+    })
+
+
+  // console.log( res.data,'res.data addTodo')
+};
